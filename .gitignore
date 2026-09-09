@@ -27,3 +27,14 @@ dist-ssr
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+
+# Local verification and build intermediates
+.npm/
+.site-build/
+.test-dist/
+.test-empty/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example

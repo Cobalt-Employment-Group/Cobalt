@@ -1,0 +1,26 @@
+[
+  {
+    "source": "https://cobaltemployment.com",
+    "status": "301",
+    "target": "https://www.cobaltemployment.com",
+    "condition": null
+  },
+  {
+    "source": "https://main.d22dxgvoxraolf.amplifyapp.com",
+    "status": "301",
+    "target": "https://www.cobaltemployment.com",
+    "condition": null
+  },
+  {
+    "source": "/index.html",
+    "status": "301",
+    "target": "/",
+    "condition": null
+  },
+  {
+    "source": "/<*>",
+    "status": "404",
+    "target": "/404.html",
+    "condition": null
+  }
+]
