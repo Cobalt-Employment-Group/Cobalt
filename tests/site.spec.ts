@@ -122,7 +122,15 @@ test("prerendered identity, metadata, and connected graph are available without 
       postalCode: "01752",
     },
   });
-  expect(organization).not.toHaveProperty("sameAs");
+  expect(organization.sameAs).toEqual([
+    "https://www.linkedin.com/company/cobalt-employment-group/",
+  ]);
+  const companyLinkedIn = page.getByRole("contentinfo").getByRole("link", { name: "LinkedIn", exact: true });
+  await expect(companyLinkedIn).toBeVisible();
+  await expect(companyLinkedIn).toHaveAttribute(
+    "href",
+    "https://www.linkedin.com/company/cobalt-employment-group/",
+  );
   expect(graph.find((node: Record<string, unknown>) => node["@type"] === "WebSite")).toMatchObject({
     "@id": entityIds.website,
     publisher: { "@id": entityIds.organization },
@@ -150,7 +158,7 @@ test("prerendered identity, metadata, and connected graph are available without 
   expect(new Set(person.sameAs).size).toBe(12);
   expect([...person.sameAs].sort()).toEqual([...approvedProfiles].sort());
   expect(site.founder.profiles.map(({ url }) => url).sort()).toEqual([...approvedProfiles].sort());
-  expect(graph.filter((node: Record<string, unknown>) => "sameAs" in node)).toEqual([person]);
+  expect(graph.filter((node: Record<string, unknown>) => "sameAs" in node)).toEqual([organization, person]);
 
   // Native disclosure and every identity link remain usable without JavaScript.
   const summary = page.locator(".founder-profiles summary");

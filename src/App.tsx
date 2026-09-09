@@ -501,6 +501,11 @@ function Footer({ notFound }: { notFound: boolean }) {
               <li>
                 <a href={`${prefix}#terms`}>Website terms</a>
               </li>
+              {site.profiles.map(({ label, url }) => (
+                <li key={url}>
+                  <a href={url}>{label}</a>
+                </li>
+              ))}
             </ul>
           </div>
           <div>

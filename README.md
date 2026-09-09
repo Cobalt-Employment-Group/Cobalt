@@ -4,7 +4,7 @@ The public organizational website for **Cobalt Employment Group LLC**, reviewed 
 
 ## Canonical facts and editorial boundaries
 
-`src/site.ts` is the typed source of identity, descriptions, address, dates, assets, founder profiles, ADP wording, form-provider configuration, and entity identifiers. `src/form-config.ts` resolves the one public environment variable from that source.
+`src/site.ts` is the typed source of identity, descriptions, address, dates, assets, company and founder profiles, ADP wording, form-provider configuration, and entity identifiers. `src/form-config.ts` resolves the one public environment variable from that source.
 
 | Fact | Approved value |
 | --- | --- |
@@ -19,7 +19,7 @@ The public organizational website for **Cobalt Employment Group LLC**, reviewed 
 | Homepage canonical | `https://www.cobaltemployment.com/` |
 | Contact | Form only; inquiries generally receive a response within one business day |
 
-Do not market public staffing, placement, recruiting, EOR, PEO, or workforce-administration services. Actual-cost reimbursement, no hidden margin, monthly invoicing, and Net 30 describe affiliate arrangements only. Do not promise advice, licensing, exemption from registration, benefit eligibility, sector coverage, or third-party endorsement. Do not add public email or telephone details, registered-agent information, an unverified NAICS classification, or company social URLs. Jake’s 12 owner-approved profiles belong only to his Person entity; unrelated professional roles are not Cobalt titles.
+Do not market public staffing, placement, recruiting, EOR, PEO, or workforce-administration services. Actual-cost reimbursement, no hidden margin, monthly invoicing, and Net 30 describe affiliate arrangements only. Do not promise advice, licensing, exemption from registration, benefit eligibility, sector coverage, or third-party endorsement. Do not add public email or telephone details, registered-agent information, an unverified NAICS classification, or unapproved company social URLs. Cobalt’s owner-approved LinkedIn Company Page belongs to its Organization entity. Jake’s 12 owner-approved profiles belong only to his Person entity; unrelated professional roles are not Cobalt titles.
 
 The possible 2027 external offering remains an internal roadmap item. Before external marketing, the HR director and appropriate counsel must review the actual model, Massachusetts agency licensing/registration and PEO rules, contracts, insurance, ADP arrangements, and operational readiness. This repository makes no legal determination. An accountant or appropriate classification professional must confirm NAICS; no replacement has been selected and no filings have been changed.
 
@@ -146,6 +146,8 @@ Set up a **Google Search Console Domain property** for `cobaltemployment.com` th
 
 ## External identity and social follow-up
 
-Create a LinkedIn Company Page **after** the corrected site is deployed. Use the exact company name, legal name where supported, canonical website, Marlborough headquarters, 2026 founding year, affiliate-only description, existing logo, and Jake as Founder and President. Connect it to Jake’s real LinkedIn experience. Verify that URL before adding Organization `sameAs`. Consider Crunchbase once the website and LinkedIn agree. Do not create empty Facebook, Instagram, or X accounts solely for SEO. Create a Google Business Profile only if the company actually meets Google’s [in-person customer-contact eligibility](https://support.google.com/business/answer/13763036?hl=en); a headquarters address alone is insufficient evidence.
+The owner supplied [Cobalt’s LinkedIn Company Page](https://www.linkedin.com/company/cobalt-employment-group/) on September 9, 2026. The public page was verified to display Cobalt Employment Group and link to `cobaltemployment.com`. Its clean URL, without the `viewAsMember` parameter, is included in the site footer and Organization `sameAs`.
+
+Keep the LinkedIn page aligned with the exact company name, legal name where supported, canonical website, Marlborough headquarters, 2026 founding year, affiliate-only description, existing logo, and Jake as Founder and President. Connect it to Jake’s real LinkedIn experience. Consider Crunchbase once the website and LinkedIn agree. Do not create empty Facebook, Instagram, or X accounts solely for SEO. Create a Google Business Profile only if the company actually meets Google’s [in-person customer-contact eligibility](https://support.google.com/business/answer/13763036?hl=en); a headquarters address alone is insufficient evidence.
 
 See [the September 8 review](docs/release-review-2026-09-08.md) for production evidence, profile-by-profile evidence and owner approval, research sources, corrections, release blockers, and checks. No third-party profiles, social accounts, external settings, or government records were changed.

@@ -12,6 +12,13 @@ export const site = {
   entityId: "001941552",
   policyDate: "2026-09-08",
   themeColor: "#004aad",
+  // Company profile supplied by the owner and verified September 9, 2026.
+  profiles: [
+    {
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/company/cobalt-employment-group/",
+    },
+  ] satisfies PublicProfile[],
   address: {
     streetAddress: "420 Lakeside Avenue, Suite 303",
     addressLocality: "Marlborough",
@@ -182,6 +189,7 @@ export function organizationGraph() {
           caption: `${site.name} logo`,
         },
         founder: { "@id": entityIds.founder },
+        sameAs: site.profiles.map(({ url }) => url),
       },
       {
         "@type": "WebSite",
