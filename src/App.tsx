@@ -270,6 +270,11 @@ function About() {
               {site.founder.legalName}, in {site.foundingDate.slice(0, 4)} to
               support workforce administration across affiliated businesses.
             </p>
+            <p>
+              <a href="https://jakegreasley.com/">
+                Jake Greasley’s personal website
+              </a>
+            </p>
             <details className="founder-profiles">
               <summary>{site.founder.name} profiles</summary>
               <p>
