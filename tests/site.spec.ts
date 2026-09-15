@@ -154,9 +154,13 @@ test("prerendered identity, metadata, and connected graph are available without 
     worksFor: { "@id": entityIds.organization },
   });
   expect(person.alternateName).toEqual(["Jacob Greasley", "Jacob Charles Greasley"]);
-  expect(person.sameAs).toHaveLength(12);
-  expect(new Set(person.sameAs).size).toBe(12);
-  expect([...person.sameAs].sort()).toEqual([...approvedProfiles].sort());
+  expect(person.sameAs).toHaveLength(14);
+  expect(new Set(person.sameAs).size).toBe(14);
+  expect([...person.sameAs].sort()).toEqual([
+    ...approvedProfiles,
+    "https://jakegreasley.com/",
+    "https://www.wikidata.org/wiki/Q141443360",
+  ].sort());
   expect(site.founder.profiles.map(({ url }) => url).sort()).toEqual([...approvedProfiles].sort());
   expect(graph.filter((node: Record<string, unknown>) => "sameAs" in node)).toEqual([organization, person]);
 
