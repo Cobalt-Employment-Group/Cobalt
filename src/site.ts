@@ -224,7 +224,11 @@ export function organizationGraph() {
         url: `${canonicalUrl}#jake-greasley`,
         affiliation: { "@id": entityIds.organization },
         worksFor: { "@id": entityIds.organization },
-        sameAs: site.founder.profiles.map(({ url }) => url),
+        sameAs: [
+          ...site.founder.profiles.map(({ url }) => url),
+          "https://jakegreasley.com/",
+          "https://www.wikidata.org/wiki/Q141443360",
+        ],
       },
     ],
   };
