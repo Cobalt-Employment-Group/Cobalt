@@ -1,8 +1,18 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
-export async function checkOutput(directory = "dist") {
+export async function checkOutput(
+  directory = "dist",
+  { publicSentryDsn = process.env.VITE_SENTRY_DSN } = {},
+) {
   const failures = [];
+  // A browser DSN contains a public project key, not a recipient address. Only
+  // exempt the exact explicitly configured, strictly validated Sentry DSN.
+  const allowedSentryDsn =
+    typeof publicSentryDsn === "string" &&
+    /^https:\/\/[a-f0-9]{32}@o[0-9]+\.ingest(?:\.(?:us|de))?\.sentry\.io\/[0-9]+$/.test(publicSentryDsn)
+      ? publicSentryDsn
+      : undefined;
   const patterns = [
     [
       "recipient address",
@@ -42,8 +52,12 @@ export async function checkOutput(directory = "dist") {
         failures.push(`${file}: browser source map`);
       if (!/\.(?:html|js|json|txt|xml|css)$/.test(entry.name)) continue;
       const text = await readFile(file, "utf8");
-      for (const [label, regex] of patterns)
-        if (regex.test(text)) failures.push(`${file}: ${label}`);
+      for (const [label, regex] of patterns) {
+        const scannedText = label === "recipient address" && allowedSentryDsn
+          ? text.replaceAll(allowedSentryDsn, "")
+          : text;
+        if (regex.test(scannedText)) failures.push(`${file}: ${label}`);
+      }
       for (const match of text.matchAll(/https?:\/\/formsubmit\.co[^\s"'<>\\]*/gi)) {
         if (
           !/^https:\/\/formsubmit\.co\/(?:documentation|privacy)$/.test(match[0]) &&
