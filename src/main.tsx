@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App";
+import { initializeMonitoring } from "./monitoring";
 import "@fontsource/inter/latin-400.css";
 import "@fontsource/inter/latin-500.css";
 import "@fontsource/inter/latin-600.css";
@@ -8,6 +9,8 @@ import "@fontsource/source-serif-4/latin-400.css";
 import "@fontsource/source-serif-4/latin-500.css";
 import "@fontsource/source-serif-4/latin-600.css";
 import "./index.css";
+
+initializeMonitoring();
 
 const root = document.getElementById("root")!;
 const notFound = !["/", "/index.html"].includes(window.location.pathname);

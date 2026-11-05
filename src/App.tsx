@@ -353,7 +353,7 @@ function Policies() {
         <Eyebrow>Information & trust</Eyebrow>
         <h2 id="privacy-title">Privacy policy</h2>
         <p>
-          Updated <time dateTime={site.policyDate}>September 8, 2026</time>.
+          Updated <time dateTime={site.policyDate}>November 4, 2026</time>.
           This policy covers this website and its contact form, operated by{" "}
           {site.legalName} in Massachusetts, United States.
         </p>
@@ -374,6 +374,15 @@ function Policies() {
               processes technical request information, such as IP address,
               requested URL, browser information, and request time, to deliver
               the site and support security and troubleshooting.
+            </p>
+            <p>
+              When enabled, Sentry receives limited technical error reports to
+              help us fix website failures, including the software release and
+              code location. Reports exclude contact-form contents, customer
+              details, authentication links, and page query strings. We do not
+              use session recordings or tracking cookies for this monitoring.
+              Sentry processes network connection information to receive reports.
+              See <a href="https://sentry.io/privacy/">Sentry’s privacy information</a>.
             </p>
             {contactConfig.enabled ? (
               <p>

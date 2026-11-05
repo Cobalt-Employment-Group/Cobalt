@@ -10,7 +10,7 @@ export const site = {
   legalName: "Cobalt Employment Group LLC",
   foundingDate: "2026-01-14",
   entityId: "001941552",
-  policyDate: "2026-09-08",
+  policyDate: "2026-11-04",
   themeColor: "#004aad",
   // Company profile supplied by the owner and verified September 9, 2026.
   profiles: [
