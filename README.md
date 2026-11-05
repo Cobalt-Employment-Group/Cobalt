@@ -129,7 +129,8 @@ A production deployment was **not authorized or performed** in this review. Owne
 
 ## Post-deployment verification
 
-Production error monitoring uses the shared **Master Planning** Sentry organization.
+Production error and website uptime monitoring use the shared **Master Planning**
+Sentry organization, with Slack-only alerts to private `#sentry-cobalt`.
 Production activation requires verified organization/project identity and private
 source-map uploads. See [monitoring setup and verification](docs/monitoring.md)
 for the production-only controls, dedicated private Slack destination, and current status.

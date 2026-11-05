@@ -1,8 +1,10 @@
 # Cobalt monitoring
 
-Status as of November 4, 2026: production monitoring, synthetic error ingestion,
-private source-map upload/resolution, private Slack alert delivery, and email
-receipt are verified. Shared installation was coordinated by BuzzKill.
+Status as of November 4, 2026: production error monitoring, synthetic error
+ingestion, private source-map upload/resolution, and private Slack alert delivery
+are verified. Cobalt error and uptime alerts now use Slack only, following Jake's
+latest instruction. Email verification below is historical; the Cobalt email
+alert action has been removed. Shared installation was coordinated by BuzzKill.
 
 ## Shared destination
 
@@ -10,12 +12,15 @@ receipt are verified. Shared installation was coordinated by BuzzKill.
 | --- | --- |
 | Sentry organization | Master Planning, US region; verified in Sentry General Settings |
 | Organization slug / ID | `master-planning` / `4512373753249792` |
-| Project | `cobalt-web`, ID `4512376742543360`, React error monitoring only |
+| Project | `cobalt-web`, ID `4512376742543360`, React errors and production website uptime |
 | Legacy Cobalt organization | `cobalt-employment-group`; Sentry shows no projects, so no transfer is needed |
 | Slack workspace | Master Planning, `T0C66F8M9U3` (connector retains old name ERP) |
 | Slack channel | Private `sentry-cobalt`, `C0CFVU71EL8` |
 | Slack channel URL | <https://master-planning-slack.slack.com/archives/C0CFVU71EL8> |
 | Shared Slack installation | Existing integration `554622`, installed by BuzzKill; bot `U0CEWEMKMJR` |
+| Error alert | `6293757`, **Cobalt production errors - Slack only**; error monitor `10859661` |
+| Website uptime monitor | `10860333`, **Cobalt production website uptime** |
+| Uptime alert | `6294112`, dedicated downtime and recovery notifications to private `#sentry-cobalt` only |
 
 The project-specific public DSN verified in Sentry is
 `https://1cd0334fc395fd24c08b80a02263e5bc@o4512373753249792.ingest.us.sentry.io/4512376742543360`.
@@ -25,19 +30,62 @@ temporary project association with `#buzzkill` was removed after `#cobalt` was
 attached, following BuzzKill's shared coordination guidance. No organization
 membership or other repo's project/team configuration was changed.
 
-The enabled fallback rule is **Cobalt production errors - owner email fallback**,
-alert ID `6293757`, attached only to Cobalt error monitor `10859661`. It matches
-new issues or resolved issues that regress, requires the `environment` tag to
-equal `production`, notifies Jake Greasley through Sentry's email action, and
-throttles repeat notifications for 30 minutes per issue. It now also has an
-explicit production-only environment selection and a native Slack action using
+The enabled error rule is **Cobalt production errors - Slack only**, alert ID
+`6293757`, attached only to Cobalt error monitor `10859661`. It matches new
+issues or resolved issues that regress, requires `environment=production` through
+both its environment selection and tag filter, and throttles repeat notifications
+for 30 minutes per issue. Its only notification action is native Slack using
 integration `554622`, Master Planning, target `#sentry-cobalt` /
 `C0CFVU71EL8`. Only `environment,release` are selected as message tags; notes are
-blank. The owner email action remains unchanged. No existing rule was removed.
-The rule triggered for synthetic event `275b7b477eb84a44824d4d81495dfc8e`
+blank. The former Notify Jake/email action was removed, and the rule was renamed
+to reflect Slack-only delivery. This supersedes the initial email-fallback policy;
+global email, security, billing, and other repositories' notifications were not
+changed.
+
+During the initial rollout, the same rule was named **Cobalt production errors -
+owner email fallback** and included an owner-email action. It triggered for
+synthetic event `275b7b477eb84a44824d4d81495dfc8e`
 (issue `COBALT-WEB-1`, ID `7830079272`). Sentry history records the email action,
 and receipt at Jake's configured Cobalt address was confirmed in Front at
 9:24 PM EST. The received email names alert `6293757` and the exact event ID.
+This is historical delivery evidence, not an active email route.
+
+Native Uptime monitor `10860333`, **Cobalt production website uptime**, belongs to
+`cobalt-web` in production and checks `GET https://www.cobaltemployment.com/`
+every minute, with a 10-second timeout and an exact HTTP 200 assertion. Three
+consecutive failures trigger downtime (approximately three minutes); one
+successful check triggers recovery. Sampling is off, custom headers and request body
+are empty, no credentials are sent, and the monitor is unassigned. BuzzKill
+reserved the shared organization's sole included free Uptime-monitor slot for
+Cobalt; no additional monitor capacity, trial, paid add-on, or usage spending was
+enabled.
+
+Dedicated alert `6294112` covers this monitor's new, regressed, and resolved
+issues, delivering downtime and recovery messages only to `C0CFVU71EL8` through
+integration `554622`. It has no repeat throttle, so a recovery notification is
+not suppressed by an earlier downtime notification. No email or Notify Jake
+action is configured. Sentry reports **100% uptime** and **214 ms** response
+duration after activation. Send Test Notification returned **Notification fired!**,
+and the existing Sentry bot delivered **Test Issue / COBALT-WEB-5**
+(`7830167414`) to private `#sentry-cobalt` at **10:47:47 PM EST**, message
+timestamp `1793850467.965209`. This verifies the Slack action, while the monitor
+is actively checking the healthy site. A full outage/recovery cycle has not been
+induced; the actual website remained available throughout verification.
+
+A later live verification showed **10 Up Checks, 0 Down Checks**, **100% uptime**,
+and **225 ms** average duration. The stored HTTP 200 assertion and one-minute
+schedule were read back after creation. The notification test issue was resolved
+after verification, preserving its history and Slack evidence.
+
+The 100%/214 ms summary comes from Sentry's live `uptime-summary` data, not a
+placeholder: the UI renders missing data as a dash/loading state, and zero known
+checks as 0.0%. The detailed Recent Check-Ins table was still empty during setup;
+it uses a separate query. Healthy-check evidence here is the aggregate summary
+and its Up Checks/Down Checks tooltip, not a claimed per-check history inspection.
+The percentage excludes missed windows and pre-incident failed checks; it is not
+a guarantee that every request succeeded.
+
+Uptime action test: <https://master-planning-slack.slack.com/archives/C0CFVU71EL8/p1793850467965209>.
 
 Cobalt has one independently deployed app: the static React/Vite website at
 `https://www.cobaltemployment.com`. There is no backend, database, authentication
@@ -57,8 +105,9 @@ secret `SENTRY_AUTH_TOKEN`. Token `1218562` was revoked unused after its value
 appeared in a browser-tool result; the replacement was handled without display
 or clipboard use. No other repo's tokens were changed. The same dedicated
 credential is also configured in Amplify's existing `main` branch build
-environment. Other branch settings, the empty contact endpoint, and all existing
-hosting/email monitoring were preserved. Temporary plaintext copies were removed.
+environment. Other branch settings, the empty contact endpoint, Amplify hosting
+logs, and unrelated email notifications were preserved. Temporary plaintext
+copies were removed.
 
 Production activation was released through merged PR #2 and successful Amplify
 job `4`, commit `c4384ca3a66f6418cd8bd6498d3ff37a4cf0a62e`, completed November 4
@@ -107,9 +156,11 @@ Native Slack delivery was received at **9:51:14 PM EST** from Sentry bot
 `1793847074.363299`. The message identifies **COBALT-WEB-4 / `7830108349`**,
 production environment, final release `e1c6c4a5d61d`, project `cobalt-web`, and
 alert `6293757`. This was an actual synthetic issue-rule notification, not a
-direct Slack post or a manual notification-only test. The original email action
-was retained alongside Slack. All four labelled verification issues were then
-resolved, preserving their event history and notification evidence.
+direct Slack post or a manual notification-only test. At this initial
+verification, the original email action was retained alongside Slack; it was
+subsequently removed under Jake's Slack-only instruction. All four labelled
+verification issues were then resolved, preserving their event history and
+notification evidence.
 
 Alert evidence: <https://master-planning-slack.slack.com/archives/C0CFVU71EL8/p1793847074363299>.
 
@@ -186,21 +237,25 @@ See [Sentry's Vite source-map guide](https://docs.sentry.io/platforms/javascript
 [data collection options](https://docs.sentry.io/platforms/javascript/guides/react/configuration/options/),
 and [API permission scopes](https://docs.sentry.io/api/permissions/).
 
-## Alerts and verification gate
+## Alert operation and verification
 
-In the shared organization, create a project-specific issue rule for
-`cobalt-web`, filtered to `environment=production`, for new and regressed errors.
-Route to private `#sentry-cobalt` and retain a verified owner email fallback.
-Confirm the shared Sentry app can access this private channel without changing
-the organization's Slack installation. Do not enable a trial, paid add-on, or
-usage-based spending to make a feature available; route any plan prerequisite
-to the BuzzKill chat.
+Keep error rule `6293757` scoped to production `cobalt-web` errors and uptime
+alert `6294112` scoped to website monitor `10860333`. Both must deliver only to
+private `#sentry-cobalt`; do not restore the former owner-email fallback or add a
+preferred-channel action that could route Cobalt alerts to email. Error alerts
+cover new and regressed issues with a 30-minute per-issue throttle. Uptime alerts
+cover new, regressed, and resolved issues without throttling lifecycle changes.
+Confirm the existing Sentry app can access this private channel without changing
+the shared Slack installation.
 
-Preserve Amplify build/hosting logs and all existing remote email notifications.
-The repository contains no earlier Sentry SDK or alert rules to replace. Do not
-remove existing monitoring until ingestion and replacement delivery are proven.
+The included Uptime-monitor slot is shared across Master Planning, not an
+allowance per project. Coordinate additional monitors or plan prerequisites
+through BuzzKill. Do not enable a trial, paid add-on, additional monitor capacity,
+or usage-based spending. Preserve Amplify build/hosting logs and unrelated
+hosting, account, security, and billing notifications; the Slack-only change is
+limited to Cobalt's Sentry alert actions.
 
-Before reporting the rollout complete:
+For future monitoring changes:
 
 1. Read the final organization slug and immutable ID directly in Sentry, then
    record the `cobalt-web` project ID and freshly verified project DSN.
@@ -212,13 +267,25 @@ Before reporting the rollout complete:
    sensitive canaries before allowing real ingestion.
 4. Confirm the event belongs to `cobalt-web`, has the intended production
    environment/release, and resolves a minified frame to its original source.
-5. Confirm Sentry's rule delivers to `C0CFVU71EL8` and the retained email route.
-   A direct Slack test message alone is not proof of Sentry alert delivery.
+5. Confirm the error rule delivers to `C0CFVU71EL8` through native Slack and has
+   no email action. A direct Slack message alone is not proof of Sentry alert
+   delivery.
 6. Verify a normal public GET and local regression checks. Keep the existing
    FormSubmit activation/release prerequisites from the README in force; do not
    deploy an incomplete contact workflow merely to exercise monitoring.
+7. Confirm the uptime monitor records healthy HTTP 200 checks for the canonical
+   website and retains the documented interval, timeout, and failure/recovery
+   thresholds. Use Send Test Notification on the uptime alert to verify its
+   native Slack action without affecting visitors. This action test and healthy
+   checks do not prove the complete outage/recovery lifecycle; do not claim a
+   full-cycle test or take the real website down merely to test notifications.
 
-Production, source-map, email, and native Slack verification evidence is recorded
-above. Existing hosting logs and email fallback remain enabled. Verification used
-only labelled synthetic errors and read-only site requests; it did not submit the
-contact form, change customer records, or trigger an error for a real visitor.
+Production error, source-map, and native Slack verification evidence is recorded
+above. The earlier email receipt is historical evidence only; Cobalt's Sentry
+alerts are now Slack-only. Verification used labelled synthetic errors and
+read-only site requests; it did not submit the contact form, change customer
+records, or trigger an error for a real visitor.
+
+See [Uptime configuration](https://docs.sentry.io/product/monitors-and-alerts/monitors/uptime-monitoring/)
+and [Alert triggers and test notifications](https://docs.sentry.io/product/monitors-and-alerts/alerts/create-alerts/)
+for the monitor and notification controls.
