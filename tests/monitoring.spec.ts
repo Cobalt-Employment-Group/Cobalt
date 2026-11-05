@@ -199,6 +199,13 @@ test("real browser SDK sends only the scrubbed event without cookies, referrer, 
   });
   const outbound: { body: string; headers: Record<string, string> }[] = [];
   const unexpected: string[] = [];
+  const sdkWarnings: string[] = [];
+  page.on("console", (message) => {
+    if (
+      ["warning", "error"].includes(message.type()) &&
+      /^(?:\[Sentry\]|Sentry Logger)/.test(message.text())
+    ) sdkWarnings.push(message.text());
+  });
   await context.addCookies([{ name: "customer_session", value: canaries[2], url: origin }]);
   await context.route("**/*", async (route) => {
     const request = route.request();
@@ -247,4 +254,5 @@ test("real browser SDK sends only the scrubbed event without cookies, referrer, 
   expect(uncaught.exception.values[0].value).toBe("Cobalt application error");
   expect(uncaught.exception.values[0].stacktrace.frames.length).toBeGreaterThan(0);
   expect(uncaught.exception.values[0].stacktrace.frames.every((frame: { filename: string }) => frame.filename === asset)).toBe(true);
+  expect(sdkWarnings).toEqual([]);
 });
