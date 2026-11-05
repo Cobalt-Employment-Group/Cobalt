@@ -130,8 +130,8 @@ A production deployment was **not authorized or performed** in this review. Owne
 ## Post-deployment verification
 
 Sentry error monitoring is prepared for the shared **Master Planning** organization.
-It remains disabled until the organization/project identity and private source-map
-upload configuration are verified. See [monitoring setup and verification](docs/monitoring.md)
+Production activation requires verified organization/project identity and private
+source-map uploads. See [monitoring setup and verification](docs/monitoring.md)
 for the production-only controls, dedicated private Slack destination, and current status.
 
 Use GET requests, not only HEAD, and inspect both status and body:

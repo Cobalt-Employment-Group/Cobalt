@@ -1,9 +1,8 @@
 # Cobalt monitoring
 
-Status as of November 4, 2026: repository integration, synthetic error ingestion,
-private source-map upload/resolution, and email receipt are verified. No
-production deployment has been started. Live website activation and shared Slack
-delivery remain pending; shared organization settings are coordinated by BuzzKill.
+Status as of November 4, 2026: production monitoring, synthetic error ingestion,
+private source-map upload/resolution, and email receipt are verified. Shared Slack
+delivery remains pending the central installation coordinated by BuzzKill.
 
 ## Shared destination
 
@@ -20,8 +19,8 @@ delivery remain pending; shared organization settings are coordinated by BuzzKil
 
 The project-specific public DSN verified in Sentry is
 `https://1cd0334fc395fd24c08b80a02263e5bc@o4512373753249792.ingest.us.sentry.io/4512376742543360`.
-It has not been enabled in a deployed browser build. The project is attached only
-to the repo-specific `#cobalt` Sentry team, with Jake as its sole member. The
+The DSN is enabled in the deployed browser build. The project is attached only to
+the repo-specific `#cobalt` Sentry team, with Jake as its sole member. The
 temporary project association with `#buzzkill` was removed after `#cobalt` was
 attached, following BuzzKill's shared coordination guidance. No organization
 membership or other repo's project/team configuration was changed.
@@ -52,9 +51,31 @@ Dedicated CI token `cobalt-amplify-sourcemaps` (ID `1218563`, `org:ci` only)
 was created after Jake's approval and stored as the Cobalt GitHub repository
 secret `SENTRY_AUTH_TOKEN`. Token `1218562` was revoked unused after its value
 appeared in a browser-tool result; the replacement was handled without display
-or clipboard use. No other repo's tokens were changed. The GitHub secret is not
-automatically available to Amplify; its branch build environment must be
-configured separately before activation.
+or clipboard use. No other repo's tokens were changed. The same dedicated
+credential is also configured in Amplify's existing `main` branch build
+environment. Other branch settings, the empty contact endpoint, and all existing
+hosting/email monitoring were preserved. Temporary plaintext copies were removed.
+
+Production activation was released through merged PR #2 and successful Amplify
+job `4`, commit `c4384ca3a66f6418cd8bd6498d3ff37a4cf0a62e`, completed November 4
+at 9:39:19 PM EST. Its 22-file artifact contains zero source maps, environment
+files, private source files, tests, secret-token markers, or sourceMappingURL
+directives. The canonical public GET returns 200 and serves
+`assets/index-DdF3ewGK.js` with the correct DSN and commit release. The contact
+form remains disabled as before; no submission was sent. A missing map URL
+serves the host's HTML fallback rather than map data; its status is 200, so map
+privacy was verified by inspecting both contents and the actual build artifact.
+
+Production private archive `6086b911-c034-b11a-316b-aeb368858060` contains the
+minified file and map for debug ID `37469376-8d3f-4fa9-af1a-5f0eeb7dc359`.
+Synthetic deployed-release event `194deac7cad64baf83186670a7c8b880` was accepted
+with HTTP 200 and resolves the deployed frame to `main.tsx:13:1` in Sentry.
+
+The full regression run passed 104 Chromium/WebKit checks. After final destination
+pinning and Sentry-token scanning, 22 focused checks plus typecheck/lint passed.
+Live browser QA also identified an obsolete v11 tracing hook; it was removed,
+and eight real-SDK runtime checks verify that initialization no longer logs
+Sentry configuration warnings. The transport still rejects all non-error items.
 
 A local build using that dedicated credential successfully uploaded private
 artifact bundle `a7884266-2b26-b197-2430-58fc2923ae23` for release
@@ -161,5 +182,6 @@ Before reporting the rollout complete:
    FormSubmit activation/release prerequisites from the README in force; do not
    deploy an incomplete contact workflow merely to exercise monitoring.
 
-No production verification results are claimed while the shared destination is
-pending. Record event/issue identifiers and alert evidence here after completion.
+Production and email evidence is recorded above. Shared Slack delivery is the
+remaining completion gate; do not report it verified until an actual Sentry
+notification reaches the private channel.

@@ -38,6 +38,7 @@ export function monitoringOptions(
     attachStacktrace: false,
     maxBreadcrumbs: 0,
     sendClientReports: false,
+    // No trace sampler or integration; the final transport rejects non-error items.
     tracePropagationTargets: [],
     propagateTraceparent: false,
     replaysSessionSampleRate: 0,
@@ -59,7 +60,6 @@ export function monitoringOptions(
     },
     beforeBreadcrumb: () => null,
     beforeSend: (event) => sanitizeMonitoringEvent(event, config, assets()),
-    beforeSendTransaction: () => null,
     beforeSendLog: () => null,
     beforeSendMetric: () => null,
     transport: (options) => {
