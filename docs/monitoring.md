@@ -1,8 +1,8 @@
 # Cobalt monitoring
 
 Status as of November 4, 2026: production monitoring, synthetic error ingestion,
-private source-map upload/resolution, and email receipt are verified. Shared Slack
-delivery remains pending the central installation coordinated by BuzzKill.
+private source-map upload/resolution, private Slack alert delivery, and email
+receipt are verified. Shared installation was coordinated by BuzzKill.
 
 ## Shared destination
 
@@ -15,7 +15,7 @@ delivery remains pending the central installation coordinated by BuzzKill.
 | Slack workspace | Master Planning, `T0C66F8M9U3` (connector retains old name ERP) |
 | Slack channel | Private `sentry-cobalt`, `C0CFVU71EL8` |
 | Slack channel URL | <https://master-planning-slack.slack.com/archives/C0CFVU71EL8> |
-| Shared Slack installation | Pending organization-level setup through BuzzKill |
+| Shared Slack installation | Existing integration `554622`, installed by BuzzKill; bot `U0CEWEMKMJR` |
 
 The project-specific public DSN verified in Sentry is
 `https://1cd0334fc395fd24c08b80a02263e5bc@o4512373753249792.ingest.us.sentry.io/4512376742543360`.
@@ -29,7 +29,11 @@ The enabled fallback rule is **Cobalt production errors - owner email fallback**
 alert ID `6293757`, attached only to Cobalt error monitor `10859661`. It matches
 new issues or resolved issues that regress, requires the `environment` tag to
 equal `production`, notifies Jake Greasley through Sentry's email action, and
-throttles repeat notifications for 30 minutes. No existing rule was removed.
+throttles repeat notifications for 30 minutes per issue. It now also has an
+explicit production-only environment selection and a native Slack action using
+integration `554622`, Master Planning, target `#sentry-cobalt` /
+`C0CFVU71EL8`. Only `environment,release` are selected as message tags; notes are
+blank. The owner email action remains unchanged. No existing rule was removed.
 The rule triggered for synthetic event `275b7b477eb84a44824d4d81495dfc8e`
 (issue `COBALT-WEB-1`, ID `7830079272`). Sentry history records the email action,
 and receipt at Jake's configured Cobalt address was confirmed in Front at
@@ -76,6 +80,38 @@ pinning and Sentry-token scanning, 22 focused checks plus typecheck/lint passed.
 Live browser QA also identified an obsolete v11 tracing hook; it was removed,
 and eight real-SDK runtime checks verify that initialization no longer logs
 Sentry configuration warnings. The transport still rejects all non-error items.
+
+The warning fix was released through PR #3 and successful Amplify job `5`, commit
+`e1c6c4a5d61dbff81348ffebd29ef02ccecca030`, completed at 9:47:46 PM EST. Its
+22-file build artifact has the same privacy guarantees. Public homepage and
+`assets/index-DY_JS6P0.js` both return 200, and the served JS bytes match the build
+artifact. A fresh normal browser load has no console warnings or errors.
+
+The final release's private source-map archive is
+`0249ec8d-85e9-b31c-f20a-9dd23ffd7825`, debug ID
+`c0f754ca-17b4-4028-b609-6e8be9d179b0`. The final deployed-release event
+`aebbc04adfc74b489d84ab727c520dbd` was accepted with HTTP 200. A distinct
+synthetic routing event, `0cac1e00c95b4b3f93649f9a8b1a3f51`, uses a fixed
+diagnostic fingerprint so it exercises the new-issue alert rather than joining
+an already-throttled verification issue. It contains no customer data and points
+to the final compiled asset at line 22, column 35549 (`main.tsx:13:1`).
+
+Only Jake and the already installed Sentry bot are members of the private alert
+channel. The bot was invited to this channel only. Shared billing, organization
+membership/slug, app installation, OAuth scopes, and other repos' settings were
+not changed by this chat. Optional Slack history access remains disabled by the
+shared installation; no replacement app or separate subscription was created.
+
+Native Slack delivery was received at **9:51:14 PM EST** from Sentry bot
+`U0CEWEMKMJR` in private channel `C0CFVU71EL8`, message timestamp
+`1793847074.363299`. The message identifies **COBALT-WEB-4 / `7830108349`**,
+production environment, final release `e1c6c4a5d61d`, project `cobalt-web`, and
+alert `6293757`. This was an actual synthetic issue-rule notification, not a
+direct Slack post or a manual notification-only test. The original email action
+was retained alongside Slack. All four labelled verification issues were then
+resolved, preserving their event history and notification evidence.
+
+Alert evidence: <https://master-planning-slack.slack.com/archives/C0CFVU71EL8/p1793847074363299>.
 
 A local build using that dedicated credential successfully uploaded private
 artifact bundle `a7884266-2b26-b197-2430-58fc2923ae23` for release
@@ -182,6 +218,7 @@ Before reporting the rollout complete:
    FormSubmit activation/release prerequisites from the README in force; do not
    deploy an incomplete contact workflow merely to exercise monitoring.
 
-Production and email evidence is recorded above. Shared Slack delivery is the
-remaining completion gate; do not report it verified until an actual Sentry
-notification reaches the private channel.
+Production, source-map, email, and native Slack verification evidence is recorded
+above. Existing hosting logs and email fallback remain enabled. Verification used
+only labelled synthetic errors and read-only site requests; it did not submit the
+contact form, change customer records, or trigger an error for a real visitor.
