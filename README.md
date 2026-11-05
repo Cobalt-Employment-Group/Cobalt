@@ -129,7 +129,7 @@ A production deployment was **not authorized or performed** in this review. Owne
 
 ## Post-deployment verification
 
-Sentry error monitoring is prepared for the shared **Master Planning** organization.
+Production error monitoring uses the shared **Master Planning** Sentry organization.
 Production activation requires verified organization/project identity and private
 source-map uploads. See [monitoring setup and verification](docs/monitoring.md)
 for the production-only controls, dedicated private Slack destination, and current status.
