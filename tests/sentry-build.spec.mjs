@@ -123,6 +123,23 @@ test("output scanner exempts only the exact configured public DSN and retains em
   }
 });
 
+test("artifact scan rejects a Sentry CI credential without logging its value", async () => {
+  const folder = await mkdtemp(path.join(os.tmpdir(), "cobalt-sentry-token-"));
+  const canary = `sntrys_${"Z".repeat(50)}`;
+  try {
+    await writeFile(path.join(folder, "bundle.js"), JSON.stringify(canary));
+    try {
+      await checkOutput(folder);
+      throw new Error("Sentry credential scan did not reject the artifact");
+    } catch (error) {
+      expect(error.message).toContain("Sentry CI credential");
+      expect(error.message.includes(canary)).toBe(false);
+    }
+  } finally {
+    await rm(folder, { recursive: true, force: true });
+  }
+});
+
 test("enabled browser bundle supports private debug maps and still passes the artifact privacy scan", async () => {
   const folder = await mkdtemp(path.join(os.tmpdir(), "cobalt-sentry-build-"));
   try {

@@ -21,6 +21,7 @@ export async function checkOutput(
     ["public telephone", /(?:\+1[ .-]?)?\(?[2-9]\d{2}\)?[ .-]\d{3}[ .-]\d{4}/],
     ["AWS credential", /(?:AKIA|ASIA)[A-Z0-9]{16}/],
     ["private key", /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],
+    ["Sentry CI credential", /sntrys_[A-Za-z0-9_+/=-]{20,}/],
     [
       "provider credential",
       /(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|sk_(?:live|test)_[A-Za-z0-9]{16,})/,

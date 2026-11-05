@@ -1,8 +1,9 @@
 # Cobalt monitoring
 
-Status as of November 4, 2026: repository integration is being prepared; no
-production telemetry has been enabled, no deployment has been started, and no
-shared Sentry organization settings have been changed by this chat.
+Status as of November 4, 2026: repository integration, synthetic error ingestion,
+private source-map upload/resolution, and email receipt are verified. No
+production deployment has been started. Live website activation and shared Slack
+delivery remain pending; shared organization settings are coordinated by BuzzKill.
 
 ## Shared destination
 
@@ -19,26 +20,61 @@ shared Sentry organization settings have been changed by this chat.
 
 The project-specific public DSN verified in Sentry is
 `https://1cd0334fc395fd24c08b80a02263e5bc@o4512373753249792.ingest.us.sentry.io/4512376742543360`.
-It has not been enabled in a deployed browser build. The new project initially
-uses the existing `#buzzkill` Sentry team (Jake is the sole organization member);
-no organization or team membership was changed.
+It has not been enabled in a deployed browser build. The project is attached only
+to the repo-specific `#cobalt` Sentry team, with Jake as its sole member. The
+temporary project association with `#buzzkill` was removed after `#cobalt` was
+attached, following BuzzKill's shared coordination guidance. No organization
+membership or other repo's project/team configuration was changed.
 
 The enabled fallback rule is **Cobalt production errors - owner email fallback**,
 alert ID `6293757`, attached only to Cobalt error monitor `10859661`. It matches
 new issues or resolved issues that regress, requires the `environment` tag to
 equal `production`, notifies Jake Greasley through Sentry's email action, and
 throttles repeat notifications for 30 minutes. No existing rule was removed.
-Delivery is not yet verified.
+The rule triggered for synthetic event `275b7b477eb84a44824d4d81495dfc8e`
+(issue `COBALT-WEB-1`, ID `7830079272`). Sentry history records the email action,
+and receipt at Jake's configured Cobalt address was confirmed in Front at
+9:24 PM EST. The received email names alert `6293757` and the exact event ID.
 
 Cobalt has one independently deployed app: the static React/Vite website at
 `https://www.cobaltemployment.com`. There is no backend, database, authentication
 service, or separately deployed contact service in this repository. FormSubmit is
 a third-party delivery provider; do not create a Sentry project for that provider.
 
-The September release review identifies Amplify app `d22dxgvoxraolf`, `main`
-production branch. Current CLI credentials have not located that app; existing
-deployment configuration has not been changed. Do not assume those credentials
-identify the correct hosting account.
+Current hosting was located through AWS Organizations and the existing
+`OrganizationAccountAccessRole`: AWS account **Cobalt / `964862484529`**, region
+**`us-east-1`**, Amplify app **Cobalt / `d11i3zvksioc8v`**, repository
+`https://github.com/Cobalt-Employment-Group/Cobalt`, `main` production branch.
+The September release review's app `d22dxgvoxraolf` is stale. The current app's
+default domain is `d11i3zvksioc8v.amplifyapp.com`. No new IAM access was created.
+
+Dedicated CI token `cobalt-amplify-sourcemaps` (ID `1218563`, `org:ci` only)
+was created after Jake's approval and stored as the Cobalt GitHub repository
+secret `SENTRY_AUTH_TOKEN`. Token `1218562` was revoked unused after its value
+appeared in a browser-tool result; the replacement was handled without display
+or clipboard use. No other repo's tokens were changed. The GitHub secret is not
+automatically available to Amplify; its branch build environment must be
+configured separately before activation.
+
+A local build using that dedicated credential successfully uploaded private
+artifact bundle `a7884266-2b26-b197-2430-58fc2923ae23` for release
+`cobalt-web@04779afd7ee4468bd196ee57f69a34904e782b9c`. Sentry shows two private
+artifacts (minified JS and source map), debug ID
+`c3da4f54-ce6f-4af8-a32c-d6d332b2b3dd`. Publishable `dist` contains zero `.map`
+files and zero `sourceMappingURL` directives. The release is a diagnostic build,
+not a claim that this code is deployed.
+
+Source-map event `3bd1f4bdf73340f98d402cedd6514cda` (issue `COBALT-WEB-2`, ID
+`7830086132`) was accepted with HTTP 200. Sentry resolved the minified frame
+`index-BGyFZq9T.js:22:35580` to `src/main.tsx:13:1`, displaying the original
+`initializeMonitoring();` source line. This verifies server-side symbolication
+of the actual private uploaded map without deploying a test button or causing
+an error for a real visitor.
+
+Project-side browser origins are restricted to
+`https://www.cobaltemployment.com`, TLS verification is enabled, and JavaScript
+source fetching remains disabled. Existing organization-enforced server data
+scrubbing, default scrubbers, and IP-address removal remain enabled.
 
 ## Privacy and runtime
 
